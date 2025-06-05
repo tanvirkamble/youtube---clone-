@@ -7,8 +7,9 @@ const ErrorComponent = ({ errorCode, onRetry, msg }) => {
 
   // 🔗 Web-safe image URLs
   const imageUrl = isRateLimit
-    ? 'https://cdn-icons-png.flaticon.com/512/5948/5948531.png' // 429: Overload/Warning
-    : 'https://cdn-icons-png.flaticon.com/512/5957/5957285.png'; // Generic error
+    ? 'https://cdn-icons-png.flaticon.com/512/5957/5957285.png'
+    : // 429: Overload/Warning
+      'https://cdn-icons-png.flaticon.com/512/5957/5957285.png'; // Generic error
 
   const title = isRateLimit
     ? 'Whoa! Slow Down Cowboy 🐎'
@@ -36,7 +37,7 @@ const ErrorComponent = ({ errorCode, onRetry, msg }) => {
         height={180}
         style={{ marginBottom: 20 }}
       />
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" color="grey" gutterBottom>
         {msg || 'An Error Occurred'}
       </Typography>
       <Typography variant="h4" gutterBottom>

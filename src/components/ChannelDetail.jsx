@@ -43,7 +43,11 @@ const ChannelDetail = () => {
 
   if (errorCode) {
     return (
-      <ErrorComponent errorCode={errorCode} onRetry={fetchChannelAndVideos} />
+      <ErrorComponent
+        errorCode={errorCode}
+        onRetry={fetchChannelAndVideos}
+        msg={`You trying to fetch channel details`}
+      />
     );
   }
 
