@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { SideBar, Videos, ErrorComponent } from './index';
 import { fetchAPI } from '../utils/fetchAPI';
 
 const Feed = () => {
   const [selectedCategory, setSelectedCategory] = useState('New');
   const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState(null);
 
   const fetchVideos = async () => {
-    setLoading(true);
+    // setLoading(true);
     setErrorCode(null);
 
     try {
       const data = await fetchAPI(`search?part=snippet&q=${selectedCategory}`);
+      // console.log('Fetched data:', data.data.items);
       if (data.errorCode) {
         setErrorCode(data.errorCode);
       } else {
-        setVideos(data.items);
+        setVideos(data.data.items || []);
       }
     } catch (error) {
       console.error('Error fetching videos:', error);
       setErrorCode(error?.response?.status || 500);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -32,13 +33,19 @@ const Feed = () => {
     fetchVideos();
   }, [selectedCategory]);
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         height: '100vh',
+  //         display: 'flex',
+  //         justifyContent: 'center',
+  //         mt: 8,
+  //       }}>
+  //       <CircularProgress />
+  //     </Box>
+  //   );
+  // }
   if (errorCode) {
     return (
       <ErrorComponent
@@ -87,7 +94,7 @@ const Feed = () => {
           {selectedCategory} <span style={{ color: '#F31503' }}>Videos</span>
         </Typography>
 
-        <Videos Vid={videos} />
+        <Videos Vid={videos || []} />
       </Box>
     </Stack>
   );

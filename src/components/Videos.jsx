@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { ChannelCard, VideoCard } from './index';
 
 const Videos = ({ Vid }) => {
@@ -7,8 +7,14 @@ const Videos = ({ Vid }) => {
     <Stack direction="row" flexWrap="wrap" justifyContent="start" gap={2}>
       {Vid.map((item, idx) => {
         if (item.id.videoId) {
+          {
+            /* console.log('videoCard', item); */
+          }
           return <VideoCard key={idx} specificVideo={item} />;
         } else if (item.id.channelId) {
+          {
+            /* console.log('ChannelCard', item); */
+          }
           return <ChannelCard key={idx} specificChannel={item} />;
         } else {
           return null;

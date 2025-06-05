@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { ErrorComponent, Videos, ChannelCard } from './index';
 import { fetchAPI } from '../utils/fetchAPI';
@@ -7,11 +7,11 @@ import { fetchAPI } from '../utils/fetchAPI';
 const ChannelDetail = () => {
   const [specificChannelDetai, setSpecificChannelDetail] = useState(null);
   const [channelVideos, setChannelVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState(null);
   const { id } = useParams();
   const fetchChannelAndVideos = async () => {
-    setLoading(true);
+    // setLoading(true);
     setErrorCode(null);
 
     const channelRes = await fetchAPI(`channels?part=snippet&id=${id}`);
@@ -23,23 +23,29 @@ const ChannelDetail = () => {
       console.log('eror detected');
       setErrorCode(channelRes.errorCode || videosRes.errorCode);
     } else {
+      console.log('specificChannelDetai', channelRes.data?.items);
       setSpecificChannelDetail(channelRes.data?.items?.[0] || null);
       setChannelVideos(videosRes.data?.items || []);
     }
 
-    setLoading(false);
+    // setLoading(false);
   };
   useEffect(() => {
     fetchChannelAndVideos();
   }, [id]);
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         display: 'flex',
+  //         justifyContent: 'center',
+  //         mt: 8,
+  //       }}>
+  //       <CircularProgress />
+  //     </Box>
+  //   );
+  // }
 
   if (errorCode) {
     return (
@@ -56,8 +62,12 @@ const ChannelDetail = () => {
       <Box>
         <div
           style={{
-            background:
-              'linear-gradient(90deg,rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)',
+            backgroundImage: specificChannelDetai?.brandingSettings?.image
+              ?.bannerExternalUrl
+              ? `url(${specificChannelDetai.brandingSettings.image.bannerExternalUrl})`
+              : 'linear-gradient(to right, #000000, #1a1a1a)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             zIndex: 10,
             height: '300px',
           }}
