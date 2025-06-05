@@ -1,7 +1,76 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Box, CircularProgress } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { ErrorComponent, Videos, ChannelCard } from './index';
+import { fetchAPI } from '../utils/fetchAPI';
 
 const ChannelDetail = () => {
-  return <div>channelDetail</div>;
+  const [specificChannelDetai, setSpecificChannelDetail] = useState(null);
+  const [channelVideos, setChannelVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorCode, setErrorCode] = useState(null);
+  const { id } = useParams();
+  const fetchChannelAndVideos = async () => {
+    setLoading(true);
+    setErrorCode(null);
+
+    const channelRes = await fetchAPI(`channels?part=snippet&id=${id}`);
+    const videosRes = await fetchAPI(
+      `search?channelId=${id}&part=snippet&order=date`
+    );
+
+    if (channelRes.errorCode || videosRes.errorCode) {
+      console.log('eror detected');
+      setErrorCode(channelRes.errorCode || videosRes.errorCode);
+    } else {
+      setSpecificChannelDetail(channelRes.data?.items?.[0] || null);
+      setChannelVideos(videosRes.data?.items || []);
+    }
+
+    setLoading(false);
+  };
+  useEffect(() => {
+    fetchChannelAndVideos();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (errorCode) {
+    return (
+      <ErrorComponent errorCode={errorCode} onRetry={fetchChannelAndVideos} />
+    );
+  }
+
+  return (
+    <Box minHeight={'95vh'} bgcolor={'#000'}>
+      <Box>
+        <div
+          style={{
+            background:
+              'linear-gradient(90deg,rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)',
+            zIndex: 10,
+            height: '300px',
+          }}
+        />
+        <Box display="flex" justifyContent="center">
+          <ChannelCard
+            specificChannel={specificChannelDetai}
+            marginTop="-110px"
+          />
+        </Box>
+      </Box>
+      <Box display={'flex'} p={2}>
+        <Box sx={{ mr: { sm: '27%', md: '10%' } }} />
+        <Videos Vid={channelVideos} />
+      </Box>
+    </Box>
+  );
 };
 
 export default ChannelDetail;

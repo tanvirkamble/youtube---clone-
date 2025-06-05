@@ -3,22 +3,19 @@ import { Card, CardContent, CardMedia, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { demoProfilePicture } from '../utils/constants';
 import { CheckCircle } from '@mui/icons-material';
+import { ChannelDetail } from '.';
 
-const ChannelCard = ({ specificChannel }) => {
+const ChannelCard = ({ specificChannel, marginTop }) => {
   return (
     <Card
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         BoxShadow: 'none',
-        // borderRadius: '20px',
-        bgcolor: '#1e1e1e',
+        bgcolor: 'transparent',
         width: { xs: '100%', sm: '358px', md: '320px' },
+        marginTop,
       }}>
       <Link
-        to={`/specificChannel?.id?.channelId`}
+        to={`/channel/${specificChannel?.id?.channelId}`}
         style={{ textDecoration: 'none' }}>
         <CardContent
           sx={{

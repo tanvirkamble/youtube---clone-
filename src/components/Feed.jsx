@@ -1,22 +1,53 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Stack, Typography } from '@mui/material';
-import { SideBar, Videos } from './index';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { SideBar, Videos, ErrorComponent } from './index';
 import { fetchAPI } from '../utils/fetchAPI';
 
 const Feed = () => {
   const [selectedCategory, setSelectedCategory] = useState('New');
   const [videos, setVideos] = useState([]);
-  // console.log('fetch file KEY:', import.meta.env.VITE_RAPID_API_KEY);
+  const [loading, setLoading] = useState(true);
+  const [errorCode, setErrorCode] = useState(null);
+
+  const fetchVideos = async () => {
+    setLoading(true);
+    setErrorCode(null);
+
+    try {
+      const data = await fetchAPI(`search?part=snippet&q=${selectedCategory}`);
+      if (data.errorCode) {
+        setErrorCode(data.errorCode);
+      } else {
+        setVideos(data.items);
+      }
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+      setErrorCode(error?.response?.status || 500);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchAPI(`search?part=snippet&q=${selectedCategory}`)
-      .then((data) => {
-        setVideos(data.items);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
+    fetchVideos();
   }, [selectedCategory]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (errorCode) {
+    return (
+      <ErrorComponent
+        errorCode={errorCode}
+        onRetry={fetchVideos}
+        msg={`trying to fetch videos for ${selectedCategory}`}
+      />
+    );
+  }
 
   return (
     <Stack
