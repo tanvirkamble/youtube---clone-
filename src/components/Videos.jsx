@@ -2,9 +2,21 @@ import React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { ChannelCard, VideoCard } from './index';
 
-const Videos = ({ Vid }) => {
+const Videos = ({ Vid, direction }) => {
+  if (!Vid?.length) {
+    return (
+      <Typography variant="h4" sx={{ color: 'white' }}>
+        No videos found
+      </Typography>
+    );
+  }
+
   return (
-    <Stack direction="row" flexWrap="wrap" justifyContent="start" gap={2}>
+    <Stack
+      direction={direction || 'row'}
+      flexWrap="wrap"
+      justifyContent="start"
+      gap={2}>
       {Vid.map((item, idx) => {
         if (item.id.videoId) {
           {
