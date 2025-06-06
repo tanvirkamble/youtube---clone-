@@ -14,11 +14,15 @@ const VideoDetail = () => {
   const [relatedVideos, setRelatedVideos] = useState([]);
 
   useEffect(() => {
-    fetchAPI(`videos?part=snippet,statistics&id=${id}`).then((data) =>
-      setVideoDetail(data.data.items[0])
-    );
+    // fetchAPI(`videos?part=snippet,statistics&id=dQw4w9WgXcQ`) // famous video
+    fetchAPI(`videos?part=snippet,statistics&id=${id}`).then((data) => {
+      console.log(data.data.items);
+      setVideoDetail(data.data.items[0]);
+    });
 
-    fetchAPI(`videos?part=snippet&relatedToVideoId=${id}&type=video`).then(
+    // fetchAPI(`videos?part=snippet&relatedToVideoId=${id}&type=video`)
+    // fetchAPI(`search?part=snippet&relatedToVideoId=dQw4w9WgXcQ&type=video`) // famous video
+    fetchAPI(`search?part=snippet&relatedToVideoId=${id}&type=video`).then(
       (data) => setRelatedVideos(data.data.items)
     );
   }, [id]);
