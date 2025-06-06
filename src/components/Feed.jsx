@@ -6,11 +6,11 @@ import { fetchAPI } from '../utils/fetchAPI';
 const Feed = () => {
   const [selectedCategory, setSelectedCategory] = useState('New');
   const [videos, setVideos] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState(null);
 
   const fetchVideos = async () => {
-    // setLoading(true);
+    setLoading(true);
     setErrorCode(null);
 
     try {
@@ -25,7 +25,7 @@ const Feed = () => {
       console.error('Error fetching videos:', error);
       setErrorCode(error?.response?.status || 500);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -33,19 +33,19 @@ const Feed = () => {
     fetchVideos();
   }, [selectedCategory]);
 
-  // if (loading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         height: '100vh',
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         mt: 8,
-  //       }}>
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          mt: 8,
+        }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
   if (errorCode) {
     return (
       <ErrorComponent

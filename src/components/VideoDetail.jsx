@@ -5,29 +5,68 @@ import { Box, Typography, Stack } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
 import { Videos } from './';
 import { fetchAPI } from '../utils/fetchAPI';
+import CircularProgress from '@mui/material/CircularProgress';
+import { ErrorComponent } from './index';
 
 const VideoDetail = () => {
   const [videoDetail, setVideoDetail] = useState(null);
-  const { id } = useParams();
+  const [relatedVideos, setRelatedVideos] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [relatedVideos, setRelatedVideos] = useState([]);
+  const { id } = useParams();
+  const fetchVideoData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const videoData = await fetchAPI(
+        `videos?part=snippet,statistics&id=${id}`
+      );
+      const relatedData = await fetchAPI(
+        `search?part=snippet&relatedToVideoId=${id}&type=video`
+      );
+
+      if (videoData.error || relatedData.error) {
+        setError(videoData.error || relatedData.error);
+      } else {
+        setVideoDetail(videoData.data.items[0]);
+        setRelatedVideos(relatedData.data.items);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('500'); // fallback error code
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    // fetchAPI(`videos?part=snippet,statistics&id=dQw4w9WgXcQ`) // famous video
-    fetchAPI(`videos?part=snippet,statistics&id=${id}`).then((data) => {
-      console.log(data.data.items);
-      setVideoDetail(data.data.items[0]);
-    });
-
-    // fetchAPI(`videos?part=snippet&relatedToVideoId=${id}&type=video`)
-    // fetchAPI(`search?part=snippet&relatedToVideoId=dQw4w9WgXcQ&type=video`) // famous video
-    fetchAPI(`search?part=snippet&relatedToVideoId=${id}&type=video`).then(
-      (data) => setRelatedVideos(data.data.items)
-    );
+    fetchVideoData();
   }, [id]);
 
-  if (!videoDetail) return 'Loading...';
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          mt: 8,
+        }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorComponent
+        error={error}
+        onRetry={fetchVideoData}
+        msg="Failed to load video details"
+      />
+    );
+  }
+
+  if (!videoDetail) return null;
+
   const {
     snippet: { title, channelId, channelTitle },
     statistics: { viewCount, likeCount, commentCount },

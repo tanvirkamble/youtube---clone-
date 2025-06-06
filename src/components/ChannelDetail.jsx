@@ -7,11 +7,11 @@ import { fetchAPI } from '../utils/fetchAPI';
 const ChannelDetail = () => {
   const [specificChannelDetai, setSpecificChannelDetail] = useState(null);
   const [channelVideos, setChannelVideos] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState(null);
   const { id } = useParams();
   const fetchChannelAndVideos = async () => {
-    // setLoading(true);
+    setLoading(true);
     setErrorCode(null);
 
     const channelRes = await fetchAPI(`channels?part=snippet&id=${id}`);
@@ -28,24 +28,24 @@ const ChannelDetail = () => {
       setChannelVideos(videosRes.data?.items || []);
     }
 
-    // setLoading(false);
+    setLoading(false);
   };
   useEffect(() => {
     fetchChannelAndVideos();
   }, [id]);
 
-  // if (loading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         mt: 8,
-  //       }}>
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          mt: 8,
+        }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (errorCode) {
     return (
