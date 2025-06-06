@@ -23,11 +23,11 @@ const VideoDetail = () => {
     );
   }, [id]);
 
+  if (!videoDetail) return 'Loading...';
   const {
     snippet: { title, channelId, channelTitle },
     statistics: { viewCount, likeCount, commentCount },
   } = videoDetail || {};
-  if (!videoDetail) return 'Loading...';
 
   return (
     <Box minHeight="95vh" p={2}>
@@ -35,7 +35,7 @@ const VideoDetail = () => {
         <Box flex={1}>
           <Box sx={{ width: '100%', position: 'sticky', top: '86px' }}>
             <ReactPlayer
-              url="https://www.youtube.com/watch?v=${id}"
+              url={`https://www.youtube.com/watch?v=${id}`}
               className="react-player"
               controls
             />
