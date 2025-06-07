@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, CircularProgress } from '@mui/material';
 import { SideBar, Videos, ErrorComponent } from './index';
 import { fetchAPI } from '../utils/fetchAPI';
 import { useParams } from 'react-router-dom';
 
 const SearchFeed = () => {
   const [videos, setVideos] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState(null);
   const { searchedTerm } = useParams();
 
   const fetchVideos = async () => {
-    // setLoading(true);
+    setLoading(true);
     setErrorCode(null);
 
     try {
@@ -26,7 +26,7 @@ const SearchFeed = () => {
       console.error('Error fetching videos:', error);
       setErrorCode(error?.response?.status || 500);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -34,20 +34,20 @@ const SearchFeed = () => {
     fetchVideos();
   }, [searchedTerm]);
 
-  // if (loading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         height: '100vh',
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         mt: 8,
-  //         bgcolor: '#000',
-  //       }}>
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          mt: 8,
+          bgcolor: '#000',
+        }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
   if (errorCode) {
     return (
       <ErrorComponent

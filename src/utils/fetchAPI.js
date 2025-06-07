@@ -1,15 +1,24 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://youtube-v31.p.rapidapi.com';
+// const BASE_URL = 'https://youtube-v31.p.rapidapi.com';
+const BASE_URL = 'https://www.googleapis.com/youtube/v3';
+
+// const options = {
+//   method: 'GET',
+//   params: {
+//     maxResults: '50',
+//   },
+//   headers: {
+//     'x-rapidapi-key': import.meta.env.VITE_RAPID_API_KEY,
+//     'x-rapidapi-host': 'youtube-v31.p.rapidapi.com',
+//   },
+// };
 
 const options = {
   method: 'GET',
   params: {
     maxResults: '50',
-  },
-  headers: {
-    'x-rapidapi-key': import.meta.env.VITE_RAPID_API_KEY,
-    'x-rapidapi-host': 'youtube-v31.p.rapidapi.com',
+    key: import.meta.env.VITE_YOUTUBE_API_KEY,
   },
 };
 
