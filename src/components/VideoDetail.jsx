@@ -8,33 +8,100 @@ import { fetchAPI } from '../utils/fetchAPI';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ErrorComponent } from './index';
 
+// Helper: Extract first few keywords from title
+const extractSearchKeyword = (title = '') => {
+  const stopwords = ['the', 'a', 'an', 'and', 'or', 'to', 'in', 'of', 'for'];
+  return title
+    .split(' ')
+    .filter((word) => !stopwords.includes(word.toLowerCase()))
+    .slice(0, 4)
+    .join(' ');
+};
+
+// Helper: Merge and deduplicate video array
+const mergeAndDedupVideos = (videoArrays, currentId) => {
+  const seen = new Set();
+  const merged = [];
+
+  videoArrays.flat().forEach((video) => {
+    const videoId = video?.id?.videoId || video?.id;
+    if (videoId && !seen.has(videoId) && videoId !== currentId) {
+      seen.add(videoId);
+      merged.push(video);
+    }
+  });
+
+  return merged;
+};
+
 const VideoDetail = () => {
   const [videoDetail, setVideoDetail] = useState(null);
   const [relatedVideos, setRelatedVideos] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+
   const fetchVideoData = async () => {
     setLoading(true);
     setError(null);
+
     try {
+      //Fetch the main video data
       const videoData = await fetchAPI(
         `videos?part=snippet,statistics&id=${id}`
       );
+
+      const video = videoData?.data?.items?.[0];
+
+      if (!video) throw new Error('Video not found');
+
+      const channelId = video?.snippet?.channelId;
+      const categoryId = video?.snippet?.categoryId;
+      const title = video?.snippet?.title;
+
+      // Fetch related by video
       const relatedData = await fetchAPI(
-        `search?part=snippet&relatedToVideoId=${id}&type=video`
+        `search?part=snippet&relatedToVideoId=${id}&type=video&videoEmbeddable=true&maxResults=25`
       );
 
+      // Fetch related by same channel
+      const channelRes = await fetchAPI(
+        `search?part=snippet&channelId=${channelId}&order=date&type=video&maxResults=6`
+      );
+
+      // Related by keyword
+      const keyword = extractSearchKeyword(title);
+      const searchRes = await fetchAPI(
+        `search?part=snippet&q=${encodeURIComponent(
+          keyword
+        )}&type=video&maxResults=6`
+      );
+
+      // Related by category
+      const categoryRes = await fetchAPI(
+        `videos?part=snippet&chart=mostPopular&videoCategoryId=${categoryId}&regionCode=IN&maxResults=6`
+      );
+
+      const merged = mergeAndDedupVideos(
+        [
+          ...(relatedData?.data?.items || []),
+          ...(channelRes?.data?.items || []),
+          ...(searchRes?.data?.items || []),
+          ...(categoryRes?.data?.items || []),
+        ],
+        id
+      );
       if (videoData.error || relatedData.error) {
         setError(videoData.error || relatedData.error);
       } else {
-        setVideoDetail(videoData.data.items[0]);
-        setRelatedVideos(relatedData.data.items);
+        setVideoDetail(video);
+        setRelatedVideos(merged);
       }
     } catch (err) {
       console.error(err);
       setError('500'); // fallback error code
     }
+
     setLoading(false);
   };
 
