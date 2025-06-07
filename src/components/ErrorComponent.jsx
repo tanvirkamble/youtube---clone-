@@ -3,21 +3,23 @@ import { Box, Typography, Button } from '@mui/material';
 
 const ErrorComponent = ({ errorCode, onRetry, msg }) => {
   console.log('ErrorComponent rendered with errorCode:', errorCode);
-  const isRateLimit = errorCode === 429;
 
-  // 🔗 Web-safe image URLs
-  const imageUrl = isRateLimit
-    ? 'https://cdn-icons-png.flaticon.com/512/564/564619.png'
-    : // 429: Overload/Warning
-      'https://cdn-icons-png.flaticon.com/512/1828/1828843.png'; // Generic error
+  // 🎨 Define visuals based on status code
+  let imageUrl = 'https://cdn-icons-png.flaticon.com/512/1828/1828843.png'; // Default error
+  let title = 'Oops! Something Broke 💥';
+  let explaination = 'Something unexpected happened. Please try again later.';
 
-  const title = isRateLimit
-    ? 'Whoa! Slow Down Cowboy 🐎'
-    : 'Oops! Something Broke 💥';
-
-  const explaination = isRateLimit
-    ? 'We’ve hit the API rate limit for now. Chill for a bit and try again soon!'
-    : 'Looks like something went wrong. Check your connection or try again later.';
+  if (errorCode === 429) {
+    imageUrl = 'https://cdn-icons-png.flaticon.com/512/564/564619.png'; // Rate limit
+    title = 'Whoa! Slow Down Cowboy 🐎';
+    explaination =
+      'You’ve hit the API rate limit. Take a breather and try again in a bit!';
+  } else if (errorCode === 403) {
+    imageUrl = 'https://cdn-icons-png.flaticon.com/512/753/753345.png'; // Quota exceeded
+    title = 'API Quota Maxed Out 🚫';
+    explaination =
+      'Our daily API quota is outta juice. Come back in 24 hours or upgrade your API key.';
+  }
 
   return (
     <Box
