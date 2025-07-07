@@ -11,7 +11,7 @@ const ChannelCard = ({ specificChannel, marginTop }) => {
       sx={{
         BoxShadow: 'none',
         bgcolor: 'transparent',
-        width: { xs: '100%', sm: '358px', md: '320px' },
+        width: { xs: '100%', sm: '338px', md: '300px' },
         marginTop,
       }}>
       <Link

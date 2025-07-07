@@ -71,8 +71,7 @@ const SearchFeed = () => {
         Search Results For:{' '}
         <span style={{ color: '#F31503' }}>{searchedTerm}</span> Videos
       </Typography>
-
-      <Videos Vid={videos || []} />
+      <Videos Vid={videos || []} direction="horizontal" />
     </Box>
   );
 };

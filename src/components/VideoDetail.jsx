@@ -143,7 +143,13 @@ const VideoDetail = () => {
     <Box minHeight="95vh" p={2}>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
         <Box flex={1}>
-          <Box sx={{ width: '100%', position: 'sticky', top: '86px' }}>
+          <Box
+            sx={{
+              transform: { sm: 'scale(0.9)', md: 'scale(1)' },
+              width: { sm: '725px', md: '900px' },
+              position: 'sticky',
+              top: '86px',
+            }}>
             <ReactPlayer
               url={`https://www.youtube.com/watch?v=${id}`}
               className="react-player"
@@ -191,7 +197,13 @@ const VideoDetail = () => {
           <Typography variant="h4" fontWeight="bold" mb={2} color="#fff">
             Related Videos
           </Typography>
-          <Videos Vid={relatedVideos} direction="column" />
+          <Videos
+            Vid={relatedVideos}
+            direction="horizontal"
+            maxWidth="500px"
+            thumbHeight="200px"
+            thumbWidth="250px"
+          />
         </Box>
       </Stack>
     </Box>

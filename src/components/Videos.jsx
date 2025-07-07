@@ -1,8 +1,19 @@
 import React from 'react';
 import { Stack, Typography } from '@mui/material';
-import { ChannelCard, VideoCard } from './index';
+import {
+  VideoCard,
+  ChannelCard,
+  HorizontalChannelCard,
+  HorizontalVideoCard,
+} from './index';
 
-const Videos = ({ Vid, direction }) => {
+const Videos = ({
+  Vid,
+  direction = 'row',
+  maxWidth,
+  thumbWidth,
+  thumbHeight,
+}) => {
   if (!Vid?.length) {
     return (
       <Typography variant="h4" sx={{ color: 'white' }}>
@@ -11,22 +22,47 @@ const Videos = ({ Vid, direction }) => {
     );
   }
 
-  return (
-    <Stack
-      direction={direction || 'row'}
-      flexWrap="wrap"
-      justifyContent="start"
-      gap={2}>
+  const isHorizontal = direction === 'horizontal';
+
+  return isHorizontal ? (
+    <Stack direction="column" gap={3} sx={{ width: '100%' }}>
       {Vid.map((item, idx) => {
         if (item.id.videoId) {
-          {
-            /* console.log('videoCard', item); */
-          }
+          return (
+            <HorizontalVideoCard
+              key={idx}
+              specificVideo={item}
+              maxWidth={maxWidth}
+              thumbHeight={thumbHeight}
+              thumbWidth={thumbWidth}
+            />
+          );
+        } else if (item.id.channelId) {
+          return (
+            <HorizontalChannelCard
+              key={idx}
+              specificChannel={item}
+              maxWidth={maxWidth}
+              thumbHeight={thumbHeight}
+              thumbWidth={thumbWidth}
+            />
+          );
+        } else {
+          return null;
+        }
+      })}
+    </Stack>
+  ) : (
+    <Stack
+      direction="row"
+      flexWrap="wrap"
+      justifyContent="start"
+      gap={2}
+      sx={{ width: '100%' }}>
+      {Vid.map((item, idx) => {
+        if (item.id.videoId) {
           return <VideoCard key={idx} specificVideo={item} />;
         } else if (item.id.channelId) {
-          {
-            /* console.log('ChannelCard', item); */
-          }
           return <ChannelCard key={idx} specificChannel={item} />;
         } else {
           return null;

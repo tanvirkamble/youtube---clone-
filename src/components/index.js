@@ -9,3 +9,5 @@ export { default as Videos } from './Videos';
 export { default as VideoCard } from './VideoCard';
 export { default as ChannelCard } from './ChannelCard';
 export { default as ErrorComponent } from './ErrorComponent';
+export { default as HorizontalVideoCard } from './HorizontalVideoCard';
+export { default as HorizontalChannelCard } from './HorizontalChannelCard';

@@ -84,7 +84,7 @@ const ChannelDetail = () => {
         </Box>
       </Box>
       <Box display={'flex'} p={2}>
-        <Box sx={{ mr: { sm: '27%', md: '10%' } }} />
+        <Box sx={{ mr: { sm: '3%', md: '10%' } }} />
         <Videos Vid={channelVideos} />
       </Box>
     </Box>
