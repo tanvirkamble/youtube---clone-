@@ -5,6 +5,7 @@ import {
   ChannelCard,
   HorizontalChannelCard,
   HorizontalVideoCard,
+  ShortsCard,
 } from './index';
 
 const Videos = ({
@@ -27,7 +28,11 @@ const Videos = ({
   return isHorizontal ? (
     <Stack direction="column" gap={3} sx={{ width: '100%' }}>
       {Vid.map((item, idx) => {
-        if (item.id.videoId) {
+        const isShort = item?.isShort;
+
+        if (isShort) {
+          return <ShortsCard key={idx} video={item} />;
+        } else if (item.id.videoId) {
           return (
             <HorizontalVideoCard
               key={idx}
@@ -60,7 +65,11 @@ const Videos = ({
       gap={2}
       sx={{ width: '100%' }}>
       {Vid.map((item, idx) => {
-        if (item.id.videoId) {
+        const isShort = item?.isShort;
+
+        if (isShort) {
+          return <ShortsCard key={idx} video={item} />;
+        } else if (item.id.videoId) {
           return <VideoCard key={idx} specificVideo={item} />;
         } else if (item.id.channelId) {
           return <ChannelCard key={idx} specificChannel={item} />;

@@ -147,13 +147,18 @@ const VideoDetail = () => {
             sx={{
               transform: { sm: 'scale(0.9)', md: 'scale(1)' },
               width: { sm: '725px', md: '900px' },
+              // height: { sm: '725px', md: '700px' },
               position: 'sticky',
-              top: '86px',
+              top: '60px',
             }}>
             <ReactPlayer
               url={`https://www.youtube.com/watch?v=${id}`}
               className="react-player"
               controls
+              sx={{
+                width: '100%',
+                height: '100px',
+              }}
             />
             <Typography color="#fff" variant="h5" fontWeight="bold" p={2}>
               {title}
@@ -193,6 +198,9 @@ const VideoDetail = () => {
           px={2}
           py={{ md: 1, xs: 5 }}
           justifyContent={'center'}
+          sx={{
+            position: 'sticky',
+          }}
           alignContent={'center'}>
           <Typography variant="h4" fontWeight="bold" mb={2} color="#fff">
             Related Videos
@@ -201,8 +209,8 @@ const VideoDetail = () => {
             Vid={relatedVideos}
             direction="horizontal"
             maxWidth="500px"
-            thumbHeight="200px"
-            thumbWidth="250px"
+            thumbHeight="150px"
+            thumbWidth="150px"
           />
         </Box>
       </Stack>
