@@ -28,11 +28,8 @@ const Videos = ({
   return isHorizontal ? (
     <Stack direction="column" gap={3} sx={{ width: '100%' }}>
       {Vid.map((item, idx) => {
-        const isShort = item?.isShort;
-
-        if (isShort) {
-          return <ShortsCard key={idx} video={item} />;
-        } else if (item.id.videoId) {
+        if (item?.isShort) return null; // ❌ Skip shorts if already rendered
+        if (item.id.videoId) {
           return (
             <HorizontalVideoCard
               key={idx}
@@ -52,30 +49,20 @@ const Videos = ({
               thumbWidth={thumbWidth}
             />
           );
-        } else {
-          return null;
         }
+        return null;
       })}
     </Stack>
   ) : (
-    <Stack
-      direction="row"
-      flexWrap="wrap"
-      justifyContent="start"
-      gap={2}
-      sx={{ width: '100%' }}>
+    <Stack direction="row" flexWrap="wrap" justifyContent="start" gap={2}>
       {Vid.map((item, idx) => {
-        const isShort = item?.isShort;
-
-        if (isShort) {
-          return <ShortsCard key={idx} video={item} />;
-        } else if (item.id.videoId) {
+        if (item?.isShort) return null;
+        if (item.id.videoId) {
           return <VideoCard key={idx} specificVideo={item} />;
         } else if (item.id.channelId) {
           return <ChannelCard key={idx} specificChannel={item} />;
-        } else {
-          return null;
         }
+        return null;
       })}
     </Stack>
   );

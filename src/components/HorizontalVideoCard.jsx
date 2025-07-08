@@ -51,22 +51,27 @@ const HorizontalVideoCard = ({
         },
       }}>
       {/* Thumbnail */}
-      <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
-        <CardMedia
-          component="img"
-          image={snippet?.thumbnails?.high?.url}
-          alt={snippet?.title}
-          sx={{
-            width: thumbWidth || { xs: '100%', sm: 320 },
-            height: thumbHeight || { xs: 200, sm: 180 },
-            objectFit: 'cover',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.02)',
-            },
-          }}
-        />
-      </Link>
+      <Box
+        sx={{
+          height: '200px',
+        }}>
+        <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
+          <CardMedia
+            component="img"
+            image={snippet?.thumbnails?.high?.url}
+            alt={snippet?.title}
+            sx={{
+              width: thumbWidth || { xs: '100%', sm: 320 },
+              height: thumbHeight || { xs: 200, sm: 180 },
+              objectFit: 'cover',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              },
+            }}
+          />
+        </Link>
+      </Box>
 
       {/* Content */}
       <CardContent sx={{ flex: 1, px: 3, py: 2 }}>
