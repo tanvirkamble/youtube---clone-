@@ -1,53 +1,89 @@
 import React from 'react';
-import { Box, Typography, Card, CardMedia } from '@mui/material';
+import { Box, Typography, Card } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import ReactPlayer from 'react-player';
+import useShortsStore from '../store/shortsStore';
 
-const ShortsCard = ({ video }) => {
-  const { snippet, seconds, isShort } = video;
+const ShortsCard = ({
+  video,
+  allShorts = [],
+  autoPlay = false,
+  isFullScreen = false,
+}) => {
+  const navigate = useNavigate();
+  const setShorts = useShortsStore((state) => state.setShorts);
+  const setInitialVideoId = useShortsStore((state) => state.setInitialVideoId);
 
-  if (!isShort) return null; // Only render shorts
+  const { snippet, seconds, isShort } = video || {};
+  const videoId = video?.id?.videoId || video?.id;
+
+  if (!isShort || !snippet || !videoId) return null;
+
+  const handleClick = () => {
+    if (isFullScreen) return; // Don’t navigate if already in ShortsPage
+    setShorts(allShorts);
+    setInitialVideoId(videoId);
+
+    // 🔐 Save for fallback hydration
+    localStorage.setItem('shorts_list', JSON.stringify(allShorts));
+    localStorage.setItem('shorts_videoId', videoId);
+
+    navigate('/shorts');
+  };
 
   return (
     <Card
+      onClick={handleClick}
       sx={{
-        width: 180,
-        bgcolor: '#1e1e1e',
+        width: isFullScreen ? '100%' : 180,
+        maxWidth: isFullScreen ? 360 : 'none',
+        bgcolor: '#2c2c2c',
         borderRadius: 2,
         overflow: 'hidden',
         color: '#fff',
         cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        px: isFullScreen ? 1 : 0,
+        py: isFullScreen ? 2 : 0,
         '&:hover': {
-          transform: 'scale(1.03)',
+          transform: isFullScreen ? 'none' : 'scale(1.03)',
           transition: '0.3s ease',
         },
       }}>
-      <Box sx={{ position: 'relative' }}>
-        <CardMedia
-          component="img"
-          image={snippet?.thumbnails?.high?.url}
-          alt={snippet?.title}
-          sx={{
-            height: 280,
-            width: '100%',
+      {/* 📽️ Video Section */}
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          bgcolor: '#000',
+        }}>
+        <ReactPlayer
+          url={`https://www.youtube.com/watch?v=${videoId}`}
+          playing={autoPlay}
+          muted
+          loop
+          width="100%"
+          height={isFullScreen ? '90vh' : 280}
+          style={{
+            aspectRatio: '9/16',
+            maxHeight: '90vh',
             objectFit: 'cover',
           }}
         />
-        {seconds !== undefined && (
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: 6,
-              right: 6,
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              fontSize: 12,
-            }}>
-            {seconds}s
-          </Box>
-        )}
       </Box>
 
-      <Box p={1}>
+      {/* 📄 Text Section */}
+      <Box
+        sx={{
+          width: '100%',
+          p: 1,
+          bgcolor: '#1f1f1f',
+          borderTop: '1px solid #444',
+        }}>
         <Typography variant="body2" fontWeight="bold" noWrap>
           {snippet?.title}
         </Typography>

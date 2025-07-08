@@ -224,7 +224,7 @@ const VideoDetail = () => {
                       overflow: 'hidden',
                       bgcolor: '#1e1e1e',
                     }}>
-                    <ShortsCard video={short} />
+                    <ShortsCard video={short} allShorts={shorts} />
                   </Box>
                 ))}
               </Box>

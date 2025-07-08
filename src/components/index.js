@@ -12,3 +12,4 @@ export { default as ErrorComponent } from './ErrorComponent';
 export { default as HorizontalVideoCard } from './HorizontalVideoCard';
 export { default as HorizontalChannelCard } from './HorizontalChannelCard';
 export { default as ShortsCard } from './ShortsCard';
+export { default as ShortsPage } from './ShortsPage';

@@ -8,6 +8,7 @@ import {
   Feed,
   VideoDetail,
   SearchFeed,
+  ShortsPage,
 } from './components/index';
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/video/:id" element={<VideoDetail />} />
           <Route path="/channel/:id" element={<ChannelDetail />} />
           <Route path="/search/:searchedTerm" element={<SearchFeed />} />
+          <Route path="/shorts" element={<ShortsPage />} />
         </Routes>
       </Box>
     </BrowserRouter>
