@@ -3,9 +3,10 @@ import { Link, useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { Box, Typography, Stack, CircularProgress } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
-import { Videos, ErrorComponent, ShortsCard } from './index';
+import { Videos, ErrorComponent, ShortsCard, SideBar } from './index';
 import { fetchAPI } from '../utils/fetchAPI';
 import { fetchDurationsForVideos } from '../utils/fetchDurations';
+import useSidebarStore from '../store/sidebarStore';
 
 const extractSearchKeyword = (title = '') => {
   const stopwords = ['the', 'a', 'an', 'and', 'or', 'to', 'in', 'of', 'for'];
@@ -39,6 +40,10 @@ const VideoDetail = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
 
+  const setSelectedCategory = useSidebarStore(
+    (state) => state.setSelectedCategory
+  );
+
   const fetchVideoData = async () => {
     setLoading(true);
     setError(null);
@@ -56,18 +61,15 @@ const VideoDetail = () => {
       const relatedData = await fetchAPI(
         `search?part=snippet&relatedToVideoId=${id}&type=video&videoEmbeddable=true&maxResults=25`
       );
-
       const channelRes = await fetchAPI(
         `search?part=snippet&channelId=${channelId}&order=date&type=video&maxResults=6`
       );
-
       const keyword = extractSearchKeyword(title);
       const searchRes = await fetchAPI(
         `search?part=snippet&q=${encodeURIComponent(
           keyword
         )}&type=video&maxResults=6`
       );
-
       const categoryRes = await fetchAPI(
         `videos?part=snippet&chart=mostPopular&videoCategoryId=${categoryId}&regionCode=IN&maxResults=6`
       );
@@ -93,6 +95,7 @@ const VideoDetail = () => {
   };
 
   useEffect(() => {
+    setSelectedCategory('');
     fetchVideoData();
   }, [id]);
 
@@ -133,67 +136,96 @@ const VideoDetail = () => {
   const mainVideos = relatedVideosEnriched.filter((v) => !v?.isShort);
 
   return (
-    <Box minHeight="95vh" p={2}>
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-        {/* Video Player Left Side */}
-        <Box flex={1}>
+    <Stack
+      sx={{
+        flexDirection: { xs: 'column', md: 'row' },
+        backgroundColor: '#000',
+        minHeight: '100vh',
+        width: '100%',
+        overflow: 'hidden',
+      }}>
+      {/* Sidebar */}
+      <Box
+        sx={{
+          height: { xs: 'auto', md: '100vh' },
+          overflowY: 'auto',
+          borderRight: { md: '1px solid #3d3d3d' },
+          px: { xs: 0, md: 2 },
+        }}>
+        <SideBar />
+        <Typography
+          className="copyright"
+          variant="body2"
+          sx={{
+            mt: 1,
+            color: '#fff',
+            marginLeft: { md: 2 },
+            display: { xs: 'none', md: 'block' },
+          }}>
+          copyright 2025
+        </Typography>
+      </Box>
+
+      {/* Main Video Section */}
+      <Box sx={{ flex: 2, overflowY: 'auto', height: '100vh', px: 2 }}>
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '900px',
+            mx: 'auto',
+            mt: 2,
+          }}>
           <Box
             sx={{
-              transform: { sm: 'scale(0.9)', md: 'scale(1)' },
-              width: { sm: '725px', md: '900px' },
-              position: 'sticky',
-              top: '30px',
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '16 / 9',
+              mb: 2,
             }}>
             <ReactPlayer
               url={`https://www.youtube.com/watch?v=${id}`}
-              className="react-player"
               controls
               width="100%"
+              height="100%"
+              style={{ position: 'absolute', top: 0, left: 0 }}
             />
-            <Typography color="#fff" variant="h6" fontWeight="bold" p={1}>
-              {title}
-            </Typography>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              sx={{ color: '#fff' }}
-              py={1}
-              px={2}>
-              <Link to={`/channel/${channelId}`}>
-                <Typography
-                  variant={{ sm: 'subtitle1', md: 'h6' }}
-                  color="#fff">
-                  {channelTitle}
-                  <CheckCircle
-                    sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
-                  />
-                </Typography>
-              </Link>
-              <Stack direction="row" gap="20px" alignItems="center">
-                <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                  {parseInt(viewCount).toLocaleString()} views
-                </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                  {parseInt(likeCount).toLocaleString()} likes
-                </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                  {parseInt(commentCount).toLocaleString()} comments
-                </Typography>
-              </Stack>
-            </Stack>
           </Box>
+
+          <Typography color="#fff" variant="h6" fontWeight="bold" mb={1}>
+            {title}
+          </Typography>
+
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            sx={{ color: '#fff' }}
+            py={1}
+            px={2}>
+            <Link to={`/channel/${channelId}`}>
+              <Typography variant="subtitle1" color="#fff">
+                {channelTitle}
+                <CheckCircle
+                  sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
+                />
+              </Typography>
+            </Link>
+            <Stack direction="row" gap="20px" alignItems="center">
+              <Typography variant="body1" sx={{ opacity: 0.7 }}>
+                {parseInt(viewCount).toLocaleString()} views
+              </Typography>
+              <Typography variant="body1" sx={{ opacity: 0.7 }}>
+                {parseInt(likeCount).toLocaleString()} likes
+              </Typography>
+              <Typography variant="body1" sx={{ opacity: 0.7 }}>
+                {parseInt(commentCount).toLocaleString()} comments
+              </Typography>
+            </Stack>
+          </Stack>
         </Box>
 
-        {/* Right Section — Shorts + Related */}
-        <Box
-          px={{ xs: 2, sm: 5, md: -1 }}
-          py={{ md: 1, xs: 5 }}
-          sx={{
-            position: 'sticky',
-            top: '60px',
-            maxWidth: '500px',
-          }}>
-          {/* Shorts Section */}
+        {/* Shorts + Related */}
+        <Box sx={{ width: '100%', mt: 5 }}>
+          {/* Shorts */}
           {shorts.length > 0 && (
             <Box sx={{ mb: 4 }}>
               <Typography
@@ -211,7 +243,6 @@ const VideoDetail = () => {
                   overflowX: 'auto',
                   scrollBehavior: 'smooth',
                   pb: 1,
-                  width: '100%',
                 }}>
                 {shorts.map((short, idx) => (
                   <Box
@@ -231,20 +262,14 @@ const VideoDetail = () => {
             </Box>
           )}
 
-          {/* Related Videos */}
+          {/* Related */}
           <Typography variant="h6" fontWeight="bold" mb={2} color="#fff">
             Related Videos
           </Typography>
-          <Videos
-            Vid={mainVideos}
-            direction="horizontal"
-            maxWidth="500px"
-            thumbHeight="100%"
-            thumbWidth="100%"
-          />
+          <Videos Vid={mainVideos} direction="horizontal" />
         </Box>
-      </Stack>
-    </Box>
+      </Box>
+    </Stack>
   );
 };
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import useShortsStore from '../store/shortsStore';
 import ShortsCard from './ShortsCard';
+import { SideBar } from './index';
 
 const ShortsPage = () => {
   const containerRef = useRef(null);
@@ -12,15 +13,12 @@ const ShortsPage = () => {
   const initialVideoId = useShortsStore((state) => state.initialVideoId);
   const setShorts = useShortsStore((state) => state.setShorts);
   const setInitialVideoId = useShortsStore((state) => state.setInitialVideoId);
-
   const [loading, setLoading] = useState(true);
 
-  // 🧠 Restore from localStorage if Zustand is empty
   useEffect(() => {
     if (shorts.length === 0) {
       const savedShorts = JSON.parse(localStorage.getItem('shorts_list'));
       const savedVideoId = localStorage.getItem('shorts_videoId');
-
       if (savedShorts?.length && savedVideoId) {
         setShorts(savedShorts);
         setInitialVideoId(savedVideoId);
@@ -29,12 +27,10 @@ const ShortsPage = () => {
         return;
       }
     }
-
     const timeout = setTimeout(() => setLoading(false), 200);
     return () => clearTimeout(timeout);
   }, [shorts, navigate, setShorts, setInitialVideoId]);
 
-  // 🎯 Scroll to focused video
   useEffect(() => {
     if (!initialVideoId || !shorts.length) return;
     const index = shorts.findIndex(
@@ -62,40 +58,79 @@ const ShortsPage = () => {
   }
 
   return (
-    <Box
-      ref={containerRef}
+    <Stack
+      direction={{ xs: 'column', md: 'row' }}
       sx={{
+        minHeight: '100vh',
+        width: '100%',
         bgcolor: '#000',
-        height: '100vh',
-        overflowY: 'scroll',
-        scrollSnapType: 'y mandatory',
+        overflow: 'hidden',
       }}>
-      {shorts.map((video, idx) => {
-        const videoId = video?.id?.videoId || video?.id;
-        if (!videoId) return null;
+      {/* Sidebar always visible */}
+      <Box
+        sx={{
+          height: { xs: 'auto', md: '100vh' },
+          overflowY: 'auto',
+          borderRight: { md: '1px solid #3d3d3d' },
+          px: { xs: 0, md: 2 },
+        }}>
+        <SideBar />
+        {/* Show copyright on md+ only */}
+        <Typography
+          className="copyright"
+          variant="body2"
+          sx={{
+            mt: 1,
+            color: '#fff',
+            ml: { md: 2 },
+            display: { xs: 'none', md: 'block' },
+          }}>
+          copyright 2025
+        </Typography>
+      </Box>
 
-        return (
-          <Box
-            key={videoId}
-            sx={{
-              height: '100vh',
-              scrollSnapAlign: 'start',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              px: 1,
-              py: 2,
-            }}>
-            <ShortsCard
-              video={video}
-              allShorts={shorts}
-              autoPlay // ⬅️ Custom prop to tell card to autoplay video
-              isFullScreen // ⬅️ Custom prop to adjust layout for full-screen mode
-            />
-          </Box>
-        );
-      })}
-    </Box>
+      {/* Shorts container */}
+      <Box
+        ref={containerRef}
+        sx={{
+          flex: 1,
+          height: '100vh',
+          overflowY: 'scroll',
+          scrollSnapType: 'y mandatory',
+        }}>
+        {shorts.map((video) => {
+          const videoId = video?.id?.videoId || video?.id;
+          if (!videoId) return null;
+
+          return (
+            <Box
+              key={videoId}
+              sx={{
+                height: '100vh',
+                scrollSnapAlign: 'start',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                px: { xs: 1, sm: 2 },
+              }}>
+              <Box
+                sx={{
+                  maxHeight: '92vh',
+                  maxWidth: '420px',
+                  width: '100%',
+                }}>
+                <ShortsCard
+                  video={video}
+                  allShorts={shorts}
+                  autoPlay
+                  isFullScreen
+                />
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
+    </Stack>
   );
 };
 

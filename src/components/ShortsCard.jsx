@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Typography, Card } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Stack } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ReactPlayer from 'react-player';
+import { CheckCircle } from '@mui/icons-material';
 import useShortsStore from '../store/shortsStore';
 
 const ShortsCard = ({
@@ -11,54 +12,54 @@ const ShortsCard = ({
   isFullScreen = false,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isShortsPage = location.pathname === '/shorts';
+
   const setShorts = useShortsStore((state) => state.setShorts);
   const setInitialVideoId = useShortsStore((state) => state.setInitialVideoId);
 
-  const { snippet, seconds, isShort } = video || {};
+  const { snippet, isShort } = video || {};
   const videoId = video?.id?.videoId || video?.id;
 
   if (!isShort || !snippet || !videoId) return null;
 
   const handleClick = () => {
-    if (isFullScreen) return; // Don’t navigate if already in ShortsPage
+    if (isFullScreen) return;
     setShorts(allShorts);
     setInitialVideoId(videoId);
-
-    // 🔐 Save for fallback hydration
     localStorage.setItem('shorts_list', JSON.stringify(allShorts));
     localStorage.setItem('shorts_videoId', videoId);
-
     navigate('/shorts');
   };
 
   return (
-    <Card
+    <Box
       onClick={handleClick}
       sx={{
-        width: isFullScreen ? '100%' : 180,
-        maxWidth: isFullScreen ? 360 : 'none',
-        bgcolor: '#2c2c2c',
-        borderRadius: 2,
+        borderRadius: isShortsPage ? '28px' : '0px',
         overflow: 'hidden',
-        color: '#fff',
-        cursor: 'pointer',
+        bgcolor: '#1e1e1e',
+        width: isFullScreen ? '360px' : 180,
+        height: isFullScreen ? '80vh' : 'auto',
+        aspectRatio: isFullScreen ? '9/16' : 'auto',
+        boxShadow: isShortsPage ? '0 0 20px rgba(255, 0, 0, 0.3)' : 'none',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        px: isFullScreen ? 1 : 0,
-        py: isFullScreen ? 2 : 0,
+        justifyContent: 'space-between',
+        cursor: isFullScreen ? 'default' : 'pointer',
+        transition: 'transform 0.3s ease',
         '&:hover': {
           transform: isFullScreen ? 'none' : 'scale(1.03)',
-          transition: '0.3s ease',
         },
       }}>
-      {/* 📽️ Video Section */}
+      {/* 🎥 Video */}
       <Box
         sx={{
           width: '100%',
+          height: isFullScreen ? '85%' : 280,
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'center',
           bgcolor: '#000',
         }}>
         <ReactPlayer
@@ -67,39 +68,45 @@ const ShortsCard = ({
           muted
           loop
           width="100%"
-          height={isFullScreen ? '90vh' : 280}
-          style={{
-            aspectRatio: '9/16',
-            maxHeight: '90vh',
-            objectFit: 'cover',
-          }}
+          height="100%"
+          style={{ objectFit: 'cover' }}
         />
       </Box>
 
-      {/* 📄 Text Section */}
+      {/* 📄 Info */}
       <Box
         sx={{
-          width: '100%',
-          p: 1,
-          bgcolor: '#1f1f1f',
-          borderTop: '1px solid #444',
+          bgcolor: '#111',
+          p: 1.5,
+          height: isFullScreen ? '15%' : 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}>
-        <Typography variant="body2" fontWeight="bold" noWrap>
+        <Typography
+          variant="subtitle2"
+          color="#fff"
+          noWrap
+          sx={{ fontWeight: 600 }}>
           {snippet?.title}
         </Typography>
-        <Typography
-          variant="caption"
-          color="gray"
-          sx={{
-            display: 'block',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}>
-          {snippet?.channelTitle}
-        </Typography>
+
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Typography
+            variant="caption"
+            color="gray"
+            noWrap
+            sx={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}>
+            {snippet?.channelTitle}
+          </Typography>
+          <CheckCircle sx={{ fontSize: 14, color: 'gray' }} />
+        </Stack>
       </Box>
-    </Card>
+    </Box>
   );
 };
 

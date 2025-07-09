@@ -3,9 +3,12 @@ import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { SideBar, Videos, ErrorComponent, ShortsCard } from './index';
 import { fetchCategory } from '../utils/fetchCategory';
 import { fetchDurationsForVideos } from '../utils/fetchDurations';
+import useSidebarStore from '../store/sidebarStore';
 
 const Feed = () => {
-  const [selectedCategory, setSelectedCategory] = useState('New');
+  // Zustand store for sidebar state
+  const selectedCategory = useSidebarStore((state) => state.selectedCategory);
+
   const [rawVideos, setRawVideos] = useState([]);
   const [enrichedVideos, setEnrichedVideos] = useState([]);
   // const [loading, setLoading] = useState(true);
@@ -79,10 +82,7 @@ const Feed = () => {
             borderRight: { md: '1px solid #3d3d3d' },
             px: { xs: 0, md: 2 },
           }}>
-          <SideBar
-            setSelectedCategory={setSelectedCategory}
-            selectedCategory={selectedCategory}
-          />
+          <SideBar />
           <Typography
             className="copyright"
             variant="body2"
@@ -133,10 +133,7 @@ const Feed = () => {
           borderRight: { md: '1px solid #3d3d3d' },
           px: { xs: 0, md: 2 },
         }}>
-        <SideBar
-          setSelectedCategory={setSelectedCategory}
-          selectedCategory={selectedCategory}
-        />
+        <SideBar />
         <Typography
           className="copyright"
           variant="body2"
