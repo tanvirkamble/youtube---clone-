@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { SideBar, Videos, ErrorComponent, ShortsCard } from './index';
-import { fetchCategory } from '../utils/fetchCategory';
-import { fetchDurationsForVideos } from '../utils/fetchDurations';
+import { fetchCategory, fetchDurationsForVideos } from '../utils';
 import useSidebarStore from '../store/sidebarStore';
 
 const Feed = () => {

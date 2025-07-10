@@ -8,8 +8,7 @@ import {
   ShortsCard,
   SideBar,
 } from './index';
-import { fetchAPI } from '../utils/fetchAPI';
-import { fetchDurationsForVideos } from '../utils/fetchDurations';
+import { fetchAPI, fetchDurationsForVideos } from '../utils';
 import useSidebarStore from '../store/sidebarStore';
 
 const ChannelDetail = () => {

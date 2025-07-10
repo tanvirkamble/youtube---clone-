@@ -11,11 +11,11 @@ import {
 import { Link } from 'react-router-dom';
 import { CheckCircle } from '@mui/icons-material';
 import {
-  demoChannelTitle,
-  demoChannelUrl,
   demoVideoUrl,
   demoVideoTitle,
-} from '../utils/constants';
+  demoChannelUrl,
+  demoChannelTitle,
+} from '../utils/index';
 
 const HorizontalVideoCard = ({
   specificVideo,
@@ -28,8 +28,8 @@ const HorizontalVideoCard = ({
     snippet,
   } = specificVideo;
 
-  const views = '403K views'; // 🔧 Placeholder
-  const uploadTime = '6 years ago'; // 🔧 Placeholder
+  // const views = '403K views'; // 🔧 Placeholder
+  // const uploadTime = '6 years ago'; // 🔧 Placeholder
 
   return (
     <Card
@@ -53,7 +53,7 @@ const HorizontalVideoCard = ({
       {/* Thumbnail */}
       <Box
         sx={{
-          height: '200px',
+          height: '180px',
         }}>
         <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
           <CardMedia
@@ -117,7 +117,7 @@ const HorizontalVideoCard = ({
 
         {/* Views + Upload Time */}
         <Typography variant="body2" color="gray" mb={1}>
-          {views} • {uploadTime}
+          {/* {views} • {uploadTime} */}
         </Typography>
 
         {/* Description Preview */}

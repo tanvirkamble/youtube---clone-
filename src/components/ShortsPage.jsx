@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import useShortsStore from '../store/shortsStore';
-import ShortsCard from './ShortsCard';
-import { SideBar } from './index';
+import { SideBar, ShortsCard } from './index';
 
 const ShortsPage = () => {
   const containerRef = useRef(null);

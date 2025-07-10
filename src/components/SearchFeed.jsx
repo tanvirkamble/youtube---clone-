@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography, CircularProgress } from '@mui/material';
 import { SideBar, Videos, ErrorComponent, ShortsCard } from './index';
-import { fetchAPI } from '../utils/fetchAPI';
-import { fetchDurationsForVideos } from '../utils/fetchDurations';
+import { fetchAPI, fetchDurationsForVideos } from '../utils';
 import { useParams } from 'react-router-dom';
 import useSidebarStore from '../store/sidebarStore';
 
