@@ -141,10 +141,7 @@ const ChannelDetail = () => {
             }}
           />
           <Box display="flex" justifyContent="center">
-            <ChannelCard
-              specificChannel={specificChannelDetail}
-              marginTop="-110px"
-            />
+            <ChannelCard channel={specificChannelDetail} marginTop="-110px" />
           </Box>
         </Box>
 
