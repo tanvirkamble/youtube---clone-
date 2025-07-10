@@ -318,8 +318,7 @@ const VideoDetail = () => {
                   <Box
                     key={idx}
                     sx={{
-                      minWidth: '140px',
-                      maxWidth: '140px',
+                      width: '180px',
                       flex: '0 0 auto',
                       borderRadius: 2,
                       overflow: 'hidden',
