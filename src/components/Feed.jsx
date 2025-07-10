@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { SideBar, Videos, ErrorComponent, ShortsCard } from './index';
+import { SideBar, Videos, ErrorComponent, ShortsCard, Channels } from './index';
 import { fetchCategory, fetchDurationsForVideos } from '../utils';
 import useSidebarStore from '../store/sidebarStore';
 
 const Feed = () => {
-  // Zustand store for sidebar state
   const selectedCategory = useSidebarStore((state) => state.selectedCategory);
 
   const [rawVideos, setRawVideos] = useState([]);
   const [enrichedVideos, setEnrichedVideos] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [rawChannels, setRawChannels] = useState([]);
   const [errorCode, setErrorCode] = useState(null);
 
-  // Fetch videos for category
+  // Fetch category data
   const fetchVideos = async () => {
-    // setLoading(true);
     setErrorCode(null);
     try {
-      const videos = await fetchCategory(selectedCategory);
+      const { videos, channels } = await fetchCategory(selectedCategory);
       setRawVideos(videos);
+      setRawChannels(channels);
+      console.log('Channels', channels);
     } catch (err) {
       console.error('Error fetching videos:', err);
       setErrorCode(err?.response?.status || 500);
-    } finally {
-      // setLoading(false);
     }
   };
 
-  // Enrich videos with durations
+  // Enrich videos with duration/shorts data
   useEffect(() => {
     const enrich = async () => {
       if (rawVideos.length > 0) {
@@ -41,27 +39,13 @@ const Feed = () => {
     enrich();
   }, [rawVideos]);
 
+  // Refetch on category change
   useEffect(() => {
     fetchVideos();
   }, [selectedCategory]);
 
   const shorts = enrichedVideos.filter((v) => v?.isShort);
   const videos = enrichedVideos.filter((v) => !v?.isShort);
-
-  // if (loading) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         height: '100vh',
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         bgcolor: '#000',
-  //       }}>
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
 
   if (errorCode) {
     return (
@@ -73,7 +57,6 @@ const Feed = () => {
         }}
         p={2}
         gap={2}>
-        {/* Sidebar */}
         <Box
           sx={{
             height: { xs: 'auto', md: '100vh' },
@@ -95,7 +78,6 @@ const Feed = () => {
           </Typography>
         </Box>
 
-        {/* Error Content */}
         <Box
           sx={{
             flex: 2,
@@ -146,16 +128,15 @@ const Feed = () => {
         </Typography>
       </Box>
 
-      {/* Main Feed */}
+      {/* Main Content */}
       <Box p={2} sx={{ flex: 2, overflowY: 'auto', height: '90vh' }}>
-        {/* Shorts First */}
+        {/* Shorts Section */}
         {shorts.length > 0 && (
           <Box sx={{ width: '100%', mb: 5 }}>
             <Typography variant="h5" color="white" mb={2} fontWeight="bold">
               {selectedCategory}{' '}
               <span style={{ color: '#F31503' }}>Shorts</span>
             </Typography>
-
             <Box
               sx={{
                 display: 'flex',
@@ -182,7 +163,28 @@ const Feed = () => {
           </Box>
         )}
 
-        {/* Main Videos */}
+        {/* Channels Section */}
+        {selectedCategory.toLowerCase() !== 'new' && rawChannels.length > 0 && (
+          <Box sx={{ width: '100%', mb: 5 }}>
+            <Typography variant="h5" color="white" mb={2} fontWeight="bold">
+              {selectedCategory}{' '}
+              <span style={{ color: '#F31503' }}>Channels</span>
+            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                overflowX: 'auto',
+                scrollBehavior: 'smooth',
+                pb: 1,
+                px: 1,
+              }}>
+              <Channels channels={rawChannels} />
+            </Box>
+          </Box>
+        )}
+
+        {/* Main Videos Section */}
         <Typography variant="h4" fontWeight="bold" mb={2}>
           {selectedCategory} <span style={{ color: '#F31503' }}>Videos</span>
         </Typography>

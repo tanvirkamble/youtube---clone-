@@ -1,20 +1,35 @@
 import { fetchAPI } from './fetchAPI';
 
 /**
- * Fetches basic video search results for a given category.
- * Uses the YouTube Data API's `search` endpoint to get video metadata (but not duration).
- * @param {string} category - The category or search query (e.g., "New", "Music", "JavaScript tutorials").
- * @returns {Promise<Array>} List of raw video objects from the YouTube API.
+ * Fetches both videos and channels for a given search category using the YouTube Data API.
+ * This includes:
+ * - Videos (type=video)
+ * - Channels (type=channel)
+ *
+ * @param {string} category - The category or search query (e.g., "New", "React", "Fitness").
+ * @returns {Promise<{ videos: Array, channels: Array }>} Object containing both videos and channels.
  */
-export const fetchCategory = async (category = 'New') => {
+const fetchCategory = async (category = 'New') => {
   try {
-    const response = await fetchAPI(`search?part=snippet&q=${category}`);
-    return response?.data?.items || [];
+    const [videoRes, channelRes] = await Promise.all([
+      fetchAPI(`search?part=snippet&q=${category}&type=video&maxResults=25`),
+      fetchAPI(`search?part=snippet&q=${category}&type=channel&maxResults=10`),
+    ]);
+
+    return {
+      videos: videoRes?.data?.items || [],
+      channels: channelRes?.data?.items || [],
+    };
   } catch (err) {
     console.error(
-      `❌ Error fetching search results for category: ${category}`,
+      `❌ Error fetching videos/channels for category: ${category}`,
       err
     );
-    return [];
+    return {
+      videos: [],
+      channels: [],
+    };
   }
 };
+
+export default fetchCategory;

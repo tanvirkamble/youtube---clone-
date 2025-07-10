@@ -27,8 +27,9 @@ const ChannelDetail = () => {
     setErrorCode(null);
     try {
       const channelRes = await fetchAPI(
-        `channels?part=snippet,brandingSettings&id=${id}`
+        `channels?part=snippet,brandingSettings,statistics&id=${id}`
       );
+
       const videosRes = await fetchAPI(
         `search?channelId=${id}&part=snippet&order=date`
       );
